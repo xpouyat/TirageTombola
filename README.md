@@ -6,3 +6,5 @@ Les programmes gagants sont définis dans ce même fichier Excel ou bien via un 
 Le résultat du tirage est stocké dans une copie du fichier Excel des lots (avec l'heure du tirage ajoutée dans le nom du fichier).
 
 Application développé en C# .Net et Visual Studio 2017.
+
+![Screen capture](https://github.com/xpouyat/TirageTombola/raw/master/capture.png)
