@@ -155,8 +155,39 @@ namespace TirageTombola
                         // Lisons les lots 
                         _xlWorksheet1 = _xlWorkBookLots.Sheets[1];
                         var xlRange = _xlWorksheet1.UsedRange;
+
+                        object[,] worksheetListeLotsArray = (object[,])xlRange.Value2;
+                        var RowCount = xlRange.Rows.Count + 1;
+                        var ColumnCount = xlRange.Columns.Count + 1;
+                  
+
                         int numlot = 1;
 
+
+                        for (int row = 2; row < RowCount; row++)
+                        {
+                            progressBar1.Value = (int)((double)row / RowCount * 100d);
+
+                            if (worksheetListeLotsArray[row, 2] != null)
+                            {
+                                string qte = Convert.ToString(worksheetListeLotsArray[row, 2]);
+                                if (qte != null && qte.Trim() == "1") // c'est bien une ligne de lot
+                                {
+                                    Lot lelot = new Lot { NumeroLot = numlot, Description = Convert.ToString(worksheetListeLotsArray[row, 3]), Carton = null };
+
+                                    if (worksheetListeLotsArray[row, 1] != null) // il y a un carton
+                                    {
+                                        lelot.Carton = Convert.ToString(worksheetListeLotsArray[row, 1]);
+                                    }
+
+                                    _ListeLots.Add(row, lelot);
+                                    numlot++;
+                                }
+                            }
+                        }
+
+
+                        /*
                         for (int i = 2; i <= xlRange.Rows.Count; i++)
                         {
                             progressBar1.Value = (int)((double)i / (double)xlRange.Rows.Count * 80d);
@@ -177,8 +208,9 @@ namespace TirageTombola
                                 }
                             }
                         }
+                        */
 
-                        infolabellots.Text = string.Format("{0} lots", numlot - 1);
+                        infolabellots.Text = string.Format("{0} lots", _ListeLots.Count);
 
                     }
                     catch (Exception ex)
@@ -218,7 +250,32 @@ namespace TirageTombola
                     Microsoft.Office.Interop.Excel.Worksheet xlWorksheet = xlWorkBookProgrammes.Sheets[1];
                     var xlRange = xlWorksheet.UsedRange;
 
+                    object[,] worksheetListeEleveProgrammesArray = (object[,])xlRange.Value2;
+                    var RowCount = xlRange.Rows.Count + 1;
+                    var ColumnCount = xlRange.Columns.Count + 1;
 
+
+                    for (int row = 2; row < RowCount; row++)
+                    {
+                        progressBar1.Value = (int)((double)row / RowCount * 100d);
+
+                        if (worksheetListeEleveProgrammesArray[row, 1] != null)  // il y a numero de programme
+                        {
+                            int numProgram = Convert.ToInt32((worksheetListeEleveProgrammesArray[row, 1]));
+
+                            if (worksheetListeEleveProgrammesArray[row, 4] != null && Convert.ToDouble(worksheetListeEleveProgrammesArray[row, 4]) == 1) // Case colonne D payé avec un 1 (cas normal), sinon pas acheté
+                            {
+                                _ListeProgrammesVendusEleves.Add(new Programme()
+                                {
+                                    Nom = Convert.ToString(worksheetListeEleveProgrammesArray[row, 2]),
+                                    Classe = Convert.ToString(worksheetListeEleveProgrammesArray[row, 3]),
+                                    NumeroProgramme = numProgram
+                                });
+                            }
+                        }
+                    }
+
+                    /*
                     for (int i = 2; i <= xlRange.Rows.Count; i++)
                     {
                         progressBar1.Value = (int)((double)i / (double)xlRange.Rows.Count * 100d);
@@ -238,6 +295,7 @@ namespace TirageTombola
                             }
                         }
                     }
+                    */
 
                     infolabel_Programmes.Text = string.Format("{0} programmes", _ListeProgrammesVendusEleves.Count);
                     buttonTirage.Enabled = true;
