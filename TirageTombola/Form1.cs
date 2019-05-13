@@ -118,7 +118,6 @@ namespace TirageTombola
             openFileDialog.Filter = "Excel files|*.xlsx";
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 saveFileDialog.Filter = "Excel files|*.xlsx";
                 saveFileDialog.FileName = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName) + "-" + DateTime.Now.ToString("hhmmssFFF", CultureInfo.InvariantCulture) + ".xlsx";
@@ -179,39 +178,7 @@ namespace TirageTombola
                             }
                         }
 
-                        // Lisons les programmes 
-                        List<int> ProgrammesNonVendus = new List<int>();
-                        Microsoft.Office.Interop.Excel.Worksheet xlWorksheetP = _xlWorkBookLots.Sheets[3];
-                        var xlRangeP = xlWorksheetP.UsedRange;
-
-                        _maxProgram = Convert.ToInt32(xlRangeP.Cells[2, 1].Value2);
-
-                        for (int i = 2; i <= xlRangeP.Rows.Count; i++)
-                        {
-                            progressBar1.Value = (int)(80d + (double)i / (double)xlRangeP.Rows.Count * 20d);
-                            if (xlWorksheetP.Cells[i, 2].Value2 != null)
-                            {
-                                int programmeNonVendu = Convert.ToInt32(xlRangeP.Cells[i, 2].Value2);
-
-                                ProgrammesNonVendus.Add(programmeNonVendu);
-                            }
-                        }
-
-                        for (int i = 1; i <= _maxProgram; i++)
-                        {
-                            if (!ProgrammesNonVendus.Contains(i))
-                            {
-                                _ListeProgrammesVendusEleves.Add(new Programme()
-                                {
-                                    Nom = null,
-                                    Classe = null,
-                                    NumeroProgramme = i
-                                });
-                            }
-                        }
-
                         infolabellots.Text = string.Format("{0} lots", numlot - 1);
-                        infolabel_Programmes.Text = string.Format("{0} programmes", _ListeProgrammesVendusEleves.Count);
 
                     }
                     catch (Exception ex)
@@ -230,7 +197,7 @@ namespace TirageTombola
 
         private void buttonElevesProgrammes_Click(object sender, EventArgs e)
         {
-            // LECTURE (OPTIONELLE) DES PROGRAMMES & ELEVES
+            // LECTURE DES PROGRAMMES & ELEVES
 
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Excel files|*.xlsx";
@@ -260,7 +227,7 @@ namespace TirageTombola
                         {
                             int numProgram = Convert.ToInt32(xlWorksheet.Cells[i, 1].Value2);
 
-                            if (xlWorksheet.Cells[i, 4].Value2 != null && Convert.ToDouble(xlWorksheet.Cells[i, 4].Value2) == 1) // Case colonne D payé avec un 1 (cas normal)
+                            if (xlWorksheet.Cells[i, 4].Value2 != null && Convert.ToDouble(xlWorksheet.Cells[i, 4].Value2) == 1) // Case colonne D payé avec un 1 (cas normal), sinon pas acheté
                             {
                                 _ListeProgrammesVendusEleves.Add(new Programme()
                                 {
@@ -269,22 +236,10 @@ namespace TirageTombola
                                     NumeroProgramme = numProgram
                                 });
                             }
-                            else if (xlWorksheet.Cells[i, 5].Value2 != null
-                                &&
-                                Convert.ToDouble(xlWorksheet.Cells[i, 5].Value2) == 1)  // mais acheté par quelqu'un d'autre
-                            {
-                                var content = xlWorksheet.Cells[i, 6].Value2;
-                                _ListeProgrammesVendusEleves.Add(new Programme()
-                                {
-                                    Nom = (content ?? "").ToString(),
-                                    Classe = null,
-                                    NumeroProgramme = numProgram
-                                });
-                            }
                         }
                     }
 
-                    infolabel_Programmes.Text = string.Format("{0} programmes (mis à jour)", _ListeProgrammesVendusEleves.Count);
+                    infolabel_Programmes.Text = string.Format("{0} programmes", _ListeProgrammesVendusEleves.Count);
                     buttonTirage.Enabled = true;
                 }
                 catch (Exception ex)

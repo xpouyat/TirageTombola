@@ -66,7 +66,7 @@
             this.buttonElevesProgrammes.Name = "buttonElevesProgrammes";
             this.buttonElevesProgrammes.Size = new System.Drawing.Size(190, 37);
             this.buttonElevesProgrammes.TabIndex = 2;
-            this.buttonElevesProgrammes.Text = "Fichier Excel des Programmes/Eleves (optionnel)...";
+            this.buttonElevesProgrammes.Text = "Fichier Excel des Programmes/Eleves...";
             this.buttonElevesProgrammes.UseVisualStyleBackColor = true;
             this.buttonElevesProgrammes.Click += new System.EventHandler(this.buttonElevesProgrammes_Click);
             // 
